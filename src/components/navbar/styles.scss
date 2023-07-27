@@ -1,0 +1,112 @@
+.navbar {
+    display: flex;
+    justify-content: space-around;
+    height: 90px;
+    position: relative;
+    background: linear-gradient(
+        to right,
+        transparent 80px,
+        #e5e5e5 80px,
+        #e5e5e5 calc(100% - 80px),
+        transparent calc(100% - 80px)
+      )
+      center bottom / 100% 1px no-repeat;
+  }
+  
+  li{
+    .chevron {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin-left: 5px;
+        border-style: solid;
+        border-width: 1px 1px 0 0;
+        transform: rotate(45deg);
+        transition: transform 0.3s;
+      }
+      
+      .chevron.down {
+        transform: rotate(45deg);
+        width: 10px;
+        height: 10px;
+        margin-left: 10px;
+        border-width: 2px 2px 0 0;
+      }
+      
+      .chevron.up {
+        transform: rotate(-135deg);
+      }
+      &.active {
+        .chevron {
+            color: rgb(255, 148, 166);
+        }
+      }
+  }
+  
+  .navbar__links,
+  .navbar__links ul {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .navbar__links ul {
+    justify-content: space-around;
+    list-style: none;
+    align-self: center;
+  }
+  
+  .navbar__links ul li a {
+    text-decoration: none;
+    color: black;
+    font-size: 15px;
+    transition: all 0.4s ease-in-out;
+  }
+  
+  .navbar__links ul li.active::after {
+    content: '';
+    display: block;
+    height: 2px;
+    background: rgb(255, 148, 166);
+    animation: width 0.4s ease;
+  }
+  
+  .navbar__links ul li.active a {
+    color: rgb(255, 148, 166);
+    font-size: 17px;
+    font-weight: 600;
+  }
+  
+  .title {
+    color: #17191c;
+    font-size: 32px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+  
+  .active-underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgb(255, 148, 166);
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 0.3s;
+  }
+  
+  .navbar__links ul li.active .active-underline {
+    transform: scaleX(1);
+  }
+  
+  @keyframes width {
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
+  }
+  
