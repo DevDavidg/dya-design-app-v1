@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, FC } from 'react';
+import { useState, useEffect, useCallback, FC } from 'react';
 import { initialBanners } from '../../data/data';
 import './styles.scss';
 

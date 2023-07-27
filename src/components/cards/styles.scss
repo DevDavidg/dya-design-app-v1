@@ -1,0 +1,8 @@
+.main_card {
+    flex-wrap: wrap;
+    width: calc(100% - 40px);
+    display: flex;
+    margin: 20px;
+    justify-content: flex-start;
+    gap: 2rem;
+}
