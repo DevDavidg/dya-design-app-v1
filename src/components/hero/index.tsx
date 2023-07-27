@@ -1,37 +1,58 @@
-import React, { useState, useEffect } from "react";
-import "./styles.scss";
+import React, { useState, useEffect, useCallback, FC } from 'react';
+import { initialBanners } from '../../data/data';
+import './styles.scss';
 
-const banners = [
-  "https://via.placeholder.com/1920x450",
-  "https://via.placeholder.com/1920x450",
-  "https://via.placeholder.com/1920x450",
-];
+const Hero: FC = () => {
+  const [banners] = useState(initialBanners);
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [autoSlideActive, setAutoSlideActive] = useState(true);
 
-const Hero: React.FC = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const numBanners = banners.length;
 
-  const goToNextSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length);
-  };
+  const goToSlide = useCallback((index: number) => {
+    setActiveSlide(index);
+    setAutoSlideActive(false);
+  }, []);
 
-  const goToPrevSlide = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + banners.length) % banners.length);
-  };
+  const goToNextSlide = useCallback(() => {
+    setActiveSlide((prevIndex) => (prevIndex + 1) % numBanners);
+  }, [numBanners]);
+
+  const goToPrevSlide = useCallback(() => {
+    setActiveSlide((prevIndex) => (prevIndex - 1 + numBanners) % numBanners);
+  }, [numBanners]);
 
   useEffect(() => {
-    const autoSlide = setInterval(goToNextSlide, 4000);
+    let autoSlide: NodeJS.Timeout;
+
+    if (autoSlideActive) {
+      autoSlide = setInterval(goToNextSlide, 4500);
+    }
+
+    const autoSlideTimeout = setTimeout(() => {
+      setAutoSlideActive(true);
+    }, 5000);
+
     return () => {
       clearInterval(autoSlide);
+      clearTimeout(autoSlideTimeout);
     };
-  }, []);
+  }, [activeSlide, autoSlideActive, goToNextSlide]);
+
+  useEffect(() => {
+    setActiveSlide(0);
+  }, [banners]);
 
   return (
     <div className="hero">
-      <div className="slider" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
+      <div
+        className="slider"
+        style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+      >
         {banners.map((banner, index) => (
           <div
-            key={banner} // Use the URL as the unique key
-            className={`slide ${index === currentIndex ? "active" : ""}`}
+            key={banner}
+            className={`slide ${index === activeSlide ? 'active' : ''}`}
             style={{ backgroundImage: `url(${banner})` }}
           />
         ))}
@@ -43,6 +64,15 @@ const Hero: React.FC = () => {
         <button className="arrow arrow-right" onClick={goToNextSlide}>
           &gt;
         </button>
+      </div>
+      <div className="bullets">
+        {banners.map((banner, index) => (
+          <button
+            key={banner}
+            className={`bullet ${index === activeSlide ? 'active' : ''}`}
+            onClick={() => goToSlide(index)}
+          />
+        ))}
       </div>
     </div>
   );
