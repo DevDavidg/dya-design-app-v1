@@ -38,7 +38,7 @@ export const Navbar: React.FC = () => {
     { label: 'New Arrivals', path: '#NewArrivals' },
     { label: 'Shop', path: '#Shop' },
     { label: 'About Us', path: '#AboutUs' },
-    { label: 'D&A Designs', class: 'title' },
+    { label: 'D&A', class: 'title' },
     { label: 'Search', path: '#Search', dropdown: true },
     { label: 'Account', path: '#Account' },
     { label: 'Cart', path: '#Cart' },
@@ -51,7 +51,7 @@ export const Navbar: React.FC = () => {
           {routes.map((route) => {
             const isActiveRoute = activeRoute === route.path;
             const isDropdown = route.dropdown;
-            const isDesignLabel = route.label === 'D&A Designs';
+            const isDesignLabel = route.label === 'D&A';
             const routeClass = route.class ? route.class : '';
             const chevronClass = isDropdownOpen ? 'down' : 'up';
 
