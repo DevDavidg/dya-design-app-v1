@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import './styles.scss';
 import SearchDropdown from './Search/index';
+import CartDropdown from './Cart';
 
 interface Route {
   label: string;
@@ -13,27 +14,46 @@ export interface NavbarProps {
   onSearchNav?: (searchQuery: string) => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ onSearchNav }) => {
+const Navbar: React.FC<NavbarProps> = ({ onSearchNav }) => {
   const [activeRoute, setActiveRoute] = useState('');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSearchDropdownOpen, setIsSearchDropdownOpen] = useState(false);
+  const [isCartDropdownOpen, setIsCartDropdownOpen] = useState(false);
+  const [isSearchChevronOpen, setIsSearchChevronOpen] = useState(false);
+  const [isCartChevronOpen, setIsCartChevronOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
   const handleRouteChange = (route: string, event: React.MouseEvent) => {
     if (route === '#Search') {
       event.preventDefault();
-      setIsDropdownOpen(true);
+      setIsSearchDropdownOpen(true);
+      setIsCartDropdownOpen(false); // Cerrar el dropdown de cart
       setActiveRoute(route);
+      setIsSearchChevronOpen(true);
+      setIsCartChevronOpen(false); // Cerrar el chevron de cart
+    } else if (route === '#Cart') {
+      event.preventDefault();
+      setIsCartDropdownOpen(true);
+      setIsSearchDropdownOpen(false);
+      setActiveRoute(route);
+      setIsCartChevronOpen(true);
+      setIsSearchChevronOpen(false);
     } else {
       setActiveRoute(route);
-      setIsDropdownOpen(false);
+      setIsSearchDropdownOpen(false);
+      setIsCartDropdownOpen(false);
+      setIsSearchChevronOpen(false);
+      setIsCartChevronOpen(false);
     }
   };
 
-  const handleCloseDropdown = () => {
+  const handleCloseDropdowns = () => {
     setIsClosing(true);
+    setIsSearchDropdownOpen(false);
+    setIsCartDropdownOpen(false);
+    setIsSearchChevronOpen(false);
+    setIsCartChevronOpen(false);
+    setActiveRoute('');
     setTimeout(() => {
-      setIsDropdownOpen(false);
-      setActiveRoute('');
       setIsClosing(false);
     }, 300);
   };
@@ -44,6 +64,57 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchNav }) => {
     }
   };
 
+  const cartProducts = useMemo(
+    () => ['Product 1', 'Product 2', 'Product 3'],
+    []
+  );
+
+  const isSearchDropdownChevronOpen =
+    isSearchDropdownOpen && isSearchChevronOpen;
+  const isCartDropdownChevronOpen = isCartDropdownOpen && isCartChevronOpen;
+
+  const getChevronClass = (
+    isDropdown: boolean,
+    isDropdownOpen: boolean,
+    routeLabel: string
+  ) => {
+    if (isDropdown && isDropdownOpen) {
+      return 'down';
+    } else if (!isDropdown && routeLabel === activeRoute) {
+      return 'up';
+    } else {
+      return 'up';
+    }
+  };
+
+  const renderDropdownContent = (route: Route) => {
+    if (route.label === 'Search' && isSearchDropdownOpen) {
+      return (
+        <SearchDropdown
+          onSearch={handleSearchQuery}
+          onClose={handleCloseDropdowns}
+          isClosed={isClosing}
+        />
+      );
+    } else if (route.label === 'Cart' && isCartDropdownOpen) {
+      return (
+        <CartDropdown products={cartProducts} onClose={handleCloseDropdowns} />
+      );
+    } else {
+      return null;
+    }
+  };
+
+  const renderDropdown = (route: Route) => {
+    if (route.label === 'Search' && isSearchDropdownOpen) {
+      return renderDropdownContent(route);
+    }
+    if (route.label === 'Cart' && isCartDropdownOpen) {
+      return renderDropdownContent(route);
+    }
+    return null;
+  };
+
   const routes: Route[] = [
     { label: 'New Arrivals', path: '#NewArrivals' },
     { label: 'Shop', path: '#Shop' },
@@ -51,7 +122,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchNav }) => {
     { label: 'D&A', class: 'title' },
     { label: 'Search', path: '#Search', dropdown: true },
     { label: 'Account', path: '#Account' },
-    { label: 'Cart', path: '#Cart' },
+    { label: 'Cart', path: '#Cart', dropdown: true },
   ];
 
   return (
@@ -60,10 +131,27 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchNav }) => {
         <ul>
           {routes.map((route) => {
             const isActiveRoute = activeRoute === route.path;
-            const isDropdown = route.dropdown;
             const isDesignLabel = route.label === 'D&A';
-            const routeClass = route.class ? route.class : '';
-            const chevronClass = isDropdownOpen ? 'down' : 'up';
+            const routeClass = route.class ?? '';
+
+            let chevronClass = 'up';
+            if (route.dropdown) {
+              const isSearchOrCartDropdown =
+                (route.label === 'Search' && isSearchDropdownChevronOpen) ||
+                (route.label === 'Cart' && isCartDropdownChevronOpen);
+
+              chevronClass = getChevronClass(
+                true,
+                isSearchOrCartDropdown,
+                route.label
+              );
+            } else if (route.label === activeRoute) {
+              chevronClass = getChevronClass(
+                false,
+                route.label === 'Search' ? isSearchDropdownChevronOpen : false,
+                route.label
+              );
+            }
 
             return (
               <li
@@ -71,7 +159,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchNav }) => {
                 className={`${isActiveRoute ? 'active' : ''} ${routeClass}`}
                 onClick={(event) => handleRouteChange(route.path ?? '', event)}
               >
-                {isDropdown ? (
+                {route.dropdown ? (
                   <>
                     <a href={route.path}>{route.label}</a>
                     <span
@@ -96,12 +184,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onSearchNav }) => {
           })}
         </ul>
       </div>
-      {isDropdownOpen && (
-        <SearchDropdown
-          onSearch={handleSearchQuery}
-          onClose={handleCloseDropdown}
-          isClosed={isClosing}
-        />
+      {routes.map((route) =>
+        route.dropdown ? (
+          <React.Fragment key={route.label}>
+            {renderDropdown(route)}
+          </React.Fragment>
+        ) : null
       )}
     </div>
   );

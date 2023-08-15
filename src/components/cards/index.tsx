@@ -1,33 +1,46 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
+import { useSearchContext } from '../../contexts/searchContext';
 import { cardData } from '../../data/data';
 import Card from './card';
 import './styles.scss';
 
-interface CardMainProps {
-  onSearchCard?: string;
-}
+const getRandomAnimationClass = () => {
+  const animations = [
+    'bounceIn',
+    'bounceInDown',
+    'bounceInUp',
+    'bounceInLeft',
+    'bounceInRight',
+  ];
+  const randomIndex = Math.floor(Math.random() * animations.length);
+  return animations[randomIndex];
+};
 
-const CardMain: FC<CardMainProps> = ({ onSearchCard }) => {
+const CardMain: FC = () => {
+  const { searchQuery } = useSearchContext();
+
   const filteredCards = cardData.filter((card) =>
-    card.title.toLowerCase().includes(onSearchCard?.toLowerCase() ?? '')
+    card.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
     <div className="main_card">
       {filteredCards.length === 0 ? (
-        <div className="main_card__not-found">
-          <h1>Not Found</h1>
-        </div>
+        <h1>No hay resultados para esta búsqueda.</h1>
       ) : (
         filteredCards.map((card) => (
-          <Card
+          <div
             key={card.title}
-            title={card.title}
-            image={card.image}
-            description={card.description}
-            price={card.price}
-            rating={card.rating}
-          />
+            className={`animated ${getRandomAnimationClass()}`}
+          >
+            <Card
+              title={card.title}
+              image={card.image}
+              description={card.description}
+              price={card.price}
+              rating={card.rating}
+            />
+          </div>
         ))
       )}
     </div>

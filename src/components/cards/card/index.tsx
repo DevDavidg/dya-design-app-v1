@@ -1,13 +1,12 @@
 import React, { FC, useEffect, useState } from 'react';
 import { CardProps } from '../../../data/data';
-import Notification from '../../notification';
 import Button from '../form/button';
 import './styles.scss';
 
 const Card: FC<CardProps> = ({ title, image, description, price, rating }) => {
   const [userRating, setUserRating] = useState(rating);
   const [showNotification, setShowNotification] = useState(false);
-  const [isAdded, setIsAdded] = useState(false); // Nuevo estado para el botón "Added"
+  const [isAdded, setIsAdded] = useState(false);
 
   const handleRatingChange = (newRating: number) => {
     setUserRating(newRating);
@@ -76,11 +75,6 @@ const Card: FC<CardProps> = ({ title, image, description, price, rating }) => {
           padding={'10px 0'}
         />
       )}
-
-      <Notification
-        message="Su voto se ha actualizado correctamente"
-        visible={showNotification}
-      />
     </div>
   );
 };

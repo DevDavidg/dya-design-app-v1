@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchContext } from '../../../contexts/searchContext';
 import './styles.scss';
 
 interface SearchDropdownProps {
@@ -11,7 +12,7 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({
   onClose,
   onSearch,
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const { searchQuery, setSearchQuery } = useSearchContext();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
