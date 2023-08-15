@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { CardProps } from '../../../data/data';
 import Notification from '../../notification';
+import Button from '../form/button';
 import './styles.scss';
 
 const Card: FC<CardProps> = ({ title, image, description, price, rating }) => {
@@ -59,14 +60,27 @@ const Card: FC<CardProps> = ({ title, image, description, price, rating }) => {
         </div>
       </div>
       {!isAdded ? (
-        <button onClick={handleAddToCartClick}>Add to Cart</button>
+        <Button
+          text="Add to cart"
+          onClick={handleAddToCartClick}
+          width={'100%'}
+          padding={'10px 0'}
+          variant="primary"
+        />
       ) : (
-        <button className="addedButton" onClick={handleAddedButtonClick}>
-          Added
-        </button>
+        <Button
+          text="Added"
+          onClick={handleAddedButtonClick}
+          variant="disabled"
+          width={'100%'}
+          padding={'10px 0'}
+        />
       )}
 
-      <Notification message="Su voto se ha actualizado correctamente" visible={showNotification} />
+      <Notification
+        message="Su voto se ha actualizado correctamente"
+        visible={showNotification}
+      />
     </div>
   );
 };

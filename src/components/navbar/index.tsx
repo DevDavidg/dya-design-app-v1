@@ -9,7 +9,11 @@ interface Route {
   class?: string;
 }
 
-export const Navbar: React.FC = () => {
+export interface NavbarProps {
+  onSearchNav?: (searchQuery: string) => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ onSearchNav }) => {
   const [activeRoute, setActiveRoute] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -32,6 +36,12 @@ export const Navbar: React.FC = () => {
       setActiveRoute('');
       setIsClosing(false);
     }, 300);
+  };
+
+  const handleSearchQuery = (searchQuery: string) => {
+    if (onSearchNav) {
+      onSearchNav(searchQuery);
+    }
   };
 
   const routes: Route[] = [
@@ -64,7 +74,10 @@ export const Navbar: React.FC = () => {
                 {isDropdown ? (
                   <>
                     <a href={route.path}>{route.label}</a>
-                    <span className={`chevron ${chevronClass}`} aria-hidden="true"></span>
+                    <span
+                      className={`chevron ${chevronClass}`}
+                      aria-hidden="true"
+                    ></span>
                   </>
                 ) : (
                   <>
@@ -85,6 +98,7 @@ export const Navbar: React.FC = () => {
       </div>
       {isDropdownOpen && (
         <SearchDropdown
+          onSearch={handleSearchQuery}
           onClose={handleCloseDropdown}
           isClosed={isClosing}
         />

@@ -1,7 +1,5 @@
 export const initialBanners = [
     'https://via.placeholder.com/1920x450',
-    'https://via.placeholder.com/1920x450',
-    'https://via.placeholder.com/1920x450',
 ];
 
 export interface CardProps {
@@ -40,5 +38,19 @@ export const cardData: CardProps[] = [
         description: "Descripción de la tarjeta 4.",
         price: 34.99,
         rating: 3.5,
+    },
+    {
+        title: "Card 5",
+        image: "https://via.placeholder.com/200x250",
+        description: "Descripción de la tarjeta 5.",
+        price: 39.99,
+        rating: 4.5,
+    },
+    {
+        title: "Card 6",
+        image: "https://via.placeholder.com/200x250",
+        description: "Descripción de la tarjeta 6.",
+        price: 44.99,
+        rating: 5.0,
     }
 ];

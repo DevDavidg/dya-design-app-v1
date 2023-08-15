@@ -1,0 +1,19 @@
+button {
+  border: none;
+  cursor: pointer;
+  transition: 0.5s;
+
+  &.primary {
+    background-color: red;
+    color: white;
+  }
+
+  &.disabled {
+    background-color: rgb(235, 235, 235);
+    color: rgb(170, 170, 170);
+
+    &:hover {
+      cursor: not-allowed;
+    }
+  }
+}

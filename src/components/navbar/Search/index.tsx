@@ -4,9 +4,13 @@ import './styles.scss';
 interface SearchDropdownProps {
   onClose: () => void;
   isClosed: boolean;
+  onSearch: (searchQuery: string) => void;
 }
 
-const SearchDropdown: React.FC<SearchDropdownProps> = ({ onClose }) => {
+const SearchDropdown: React.FC<SearchDropdownProps> = ({
+  onClose,
+  onSearch,
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
@@ -34,13 +38,15 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({ onClose }) => {
     }
   }, [shouldRender]);
 
-  const handleSearch = () => {
-    console.log(`Realizando búsqueda: ${searchQuery}`);
+  const handleSearch = (currentQuery: string) => {
+    if (onSearch) {
+      onSearch(currentQuery);
+    }
   };
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      handleSearch();
+      handleSearch(searchQuery);
     }
   };
 
@@ -62,7 +68,11 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({ onClose }) => {
   }
 
   return (
-    <div className={`dropdown ${isDropdownOpen ? 'open' : ''} ${isClosing ? 'closing' : ''}`}>
+    <div
+      className={`dropdown ${isDropdownOpen ? 'open' : ''} ${
+        isClosing ? 'closing' : ''
+      }`}
+    >
       <button className="close-button" onClick={handleClose}>
         X
       </button>
@@ -71,11 +81,14 @@ const SearchDropdown: React.FC<SearchDropdownProps> = ({ onClose }) => {
         id="searchInput"
         type="text"
         value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+        onChange={(e) => {
+          setSearchQuery(e.target.value);
+          handleSearch(e.target.value);
+        }}
         onKeyDown={handleKeyPress}
         autoComplete="off"
       />
-      <button onClick={handleSearch}>Buscar</button>
+      <button onClick={() => handleSearch(searchQuery)}>Buscar</button>
     </div>
   );
 };
